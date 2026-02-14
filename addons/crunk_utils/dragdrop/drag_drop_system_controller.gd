@@ -85,7 +85,7 @@ func end_drag() -> void:
 	var is_component_valid: bool = is_instance_valid(current_hovered_draggable) 
 	var is_target_valid: bool = is_instance_valid(current_hovered_draggable_target)
 	if is_component_valid and is_target_valid:
-		draggable_hover_start.emit(current_hovered_draggable_target)
+		draggable_hover_start.emit(current_hovered_draggable, current_hovered_draggable_target)
 
 	is_component_valid = is_instance_valid(current_receptor)
 	is_target_valid = is_instance_valid(current_receptor_target)
@@ -152,11 +152,11 @@ func _on_receptor_hover_start(receptor: DragDropReceptorComponent, receptor_targ
 func _on_receptor_hover_end(receptor: DragDropReceptorComponent, receptor_target: Node) -> void:
 	if current_receptor != receptor:
 		return
-	clear_current_receptor()
 	if is_dragging:
-		_emit_drop_hover_end()
+		_emit_drop_hover_end(current_receptor, current_receptor_target)
 	else:
 		receptor_hover_end.emit(receptor, receptor_target)
+	clear_current_receptor()
 
 
 ## Emit drop hover start signal when draggable enters a receptor
@@ -172,15 +172,19 @@ func _emit_drop_hover_start() -> void:
 
 
 ## Emit drop hover end signal when draggable exits a receptor
-func _emit_drop_hover_end() -> void:
-	var is_valid_drop: bool = current_receptor.can_receive_drop(
-		current_draggable, 
+func _emit_drop_hover_end(
+	receptor: DragDropReceptorComponent = current_receptor,
+	receptor_target: Node = current_receptor_target
+) -> void:
+	if not is_instance_valid(receptor) or not is_instance_valid(current_draggable):
+		return
+	var is_valid_drop: bool = receptor.can_receive_drop(
+		current_draggable,
 		current_draggable_target
 	)
-	
 	drop_hover_end.emit(
-		current_draggable, current_draggable_target, 
-		current_receptor, current_receptor_target, is_valid_drop
+		current_draggable, current_draggable_target,
+		receptor, receptor_target, is_valid_drop
 	)
 
 
@@ -198,6 +202,9 @@ func _on_draggable_hover_start(draggable: DragDropDraggableComponent, target_nod
 
 ## Handle draggable hover end - only emit if not dragging
 func _on_draggable_hover_end(draggable: DragDropDraggableComponent, target_node: Node) -> void:
+	if current_hovered_draggable == draggable:
+		current_hovered_draggable = null
+		current_hovered_draggable_target = null
 	if is_dragging:
 		return
 	draggable_hover_end.emit(draggable, target_node)

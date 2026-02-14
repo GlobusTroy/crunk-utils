@@ -20,7 +20,7 @@ var _drag_state: DragState = DragState.NOT_DRAGGING
 func _ready() -> void:
 	super._ready()
 	_setup_target_control()
-	set_process_unhandled_input(true)
+	set_process_unhandled_input(false)
 
 
 func _setup_target_control() -> void:
@@ -41,6 +41,7 @@ func _on_gui_input(event: InputEvent) -> void:
 		if event.pressed:
 			_drag_start_position = event.global_position
 			_drag_state = DragState.BEGINNING_DRAG
+			set_process_unhandled_input(true)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -70,6 +71,7 @@ func _end_drag() -> void:
 	if _drag_state == DragState.DRAGGING:
 		emit_drag_ended()
 	_drag_state = DragState.NOT_DRAGGING
+	set_process_unhandled_input(false)
 
 
 ## Get the target node for this draggable component
