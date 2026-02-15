@@ -13,4 +13,4 @@ globs: **/*.gd
 - - Use Resource as the base class for any data container ex: ui state, scene, or game logic data.
 - - Use Node as the base class for a 'component' node used to add functionality to a parent node
 - - Use Node as the base class for an orchestrator class that lives in the scene tree
-- Consult @godot-docs MCP to understand any built-in classes being used 
+- Consult godot-tools/godot-docs MCP to understand any built-in classes being used 
