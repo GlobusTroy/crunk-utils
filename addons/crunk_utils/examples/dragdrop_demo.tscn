@@ -5,6 +5,10 @@
 [ext_resource type="Script" uid="uid://xyctn62bko85" path="res://addons/crunk_utils/examples/drag_drop_visual_feedback_strategy.gd" id="3_visual_strategy"]
 [ext_resource type="Script" uid="uid://b0jdh0mnlegh4" path="res://addons/crunk_utils/dragdrop/drag_drop_draggable_control_component.gd" id="4_draggable"]
 [ext_resource type="Script" uid="uid://bgir3hmpgexab" path="res://addons/crunk_utils/dragdrop/drag_drop_receptor_control_component.gd" id="5_receptor"]
+[ext_resource type="Resource" uid="uid://cpx3q4iaybf3r" path="res://addons/crunk_utils/examples/red_only_validator.tres" id="6_red_validator"]
+[ext_resource type="Resource" uid="uid://dqr8s5t2xm1np" path="res://addons/crunk_utils/examples/blue_only_validator.tres" id="7_blue_validator"]
+[ext_resource type="Resource" uid="uid://bkl7m2xa0p4vq" path="res://addons/crunk_utils/examples/green_only_validator.tres" id="8_green_validator"]
+[ext_resource type="Resource" uid="uid://dw7k3m8q5xn2p" path="res://addons/crunk_utils/examples/accept_all_validator.tres" id="9_r6o2j"]
 
 [node name="DragDropDemo" type="Control" unique_id=599316434]
 layout_mode = 3
@@ -110,6 +114,7 @@ color = Color(0.5, 0.15, 0.15, 1)
 
 [node name="DragDropReceptorControlComponent" type="Node" parent="ReceptorsContainer/RedReceptor" unique_id=2062808579]
 script = ExtResource("5_receptor")
+validator = ExtResource("6_red_validator")
 
 [node name="BlueReceptor" type="ColorRect" parent="ReceptorsContainer" unique_id=1130263592]
 custom_minimum_size = Vector2(120, 120)
@@ -118,6 +123,7 @@ color = Color(0.15, 0.15, 0.5, 1)
 
 [node name="DragDropReceptorControlComponent" type="Node" parent="ReceptorsContainer/BlueReceptor" unique_id=1129487894]
 script = ExtResource("5_receptor")
+validator = ExtResource("7_blue_validator")
 
 [node name="GreenReceptor" type="ColorRect" parent="ReceptorsContainer" unique_id=788888500]
 custom_minimum_size = Vector2(120, 120)
@@ -126,6 +132,7 @@ color = Color(0.15, 0.5, 0.15, 1)
 
 [node name="DragDropReceptorControlComponent" type="Node" parent="ReceptorsContainer/GreenReceptor" unique_id=1591712869]
 script = ExtResource("5_receptor")
+validator = ExtResource("8_green_validator")
 
 [node name="AnyReceptor" type="ColorRect" parent="ReceptorsContainer" unique_id=1591777871]
 custom_minimum_size = Vector2(120, 120)
@@ -134,6 +141,7 @@ color = Color(0.4, 0.4, 0.4, 1)
 
 [node name="DragDropReceptorControlComponent" type="Node" parent="ReceptorsContainer/AnyReceptor" unique_id=1682284907]
 script = ExtResource("5_receptor")
+validator = ExtResource("9_r6o2j")
 
 [node name="AnyLabel" type="Label" parent="ReceptorsContainer/AnyReceptor" unique_id=66743973]
 layout_mode = 1

@@ -42,6 +42,12 @@ func _on_gui_input(event: InputEvent) -> void:
 			_drag_start_position = event.global_position
 			_drag_state = DragState.BEGINNING_DRAG
 			set_process_unhandled_input(true)
+		else:
+			_end_drag()
+	elif event is InputEventMouseMotion and _drag_state == DragState.BEGINNING_DRAG:
+		var distance: float = event.global_position.distance_to(_drag_start_position)
+		if distance >= drag_start_distance:
+			_start_drag()
 
 
 func _unhandled_input(event: InputEvent) -> void:

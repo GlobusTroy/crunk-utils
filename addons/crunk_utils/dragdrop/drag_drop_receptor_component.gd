@@ -7,7 +7,7 @@ extends Node
 signal receptor_hover_start(receptor_component: DragDropReceptorComponent, target_node: Node)
 signal receptor_hover_end(receptor_component: DragDropReceptorComponent, target_node: Node)
 
-@export var validator: DragDropValidatorBase = DragDropValidatorBase.new()
+@export var validator: DragDropValidatorBase
 
 
 func _ready() -> void:
