@@ -71,6 +71,7 @@ func end_drag() -> void:
 	if not is_instance_valid(current_receptor):
 		drag_ended.emit(current_draggable, current_draggable_target)
 	else:
+		_emit_drop_hover_end(current_receptor, current_receptor_target)
 		var is_valid_drop: bool = current_receptor.can_receive_drop(
 			current_draggable, current_draggable_target
 		)
@@ -79,6 +80,7 @@ func end_drag() -> void:
 			current_receptor, current_receptor_target, 
 			is_valid_drop
 		)
+		clear_current_receptor()
 	current_draggable = null
 	current_draggable_target = null
 

@@ -17,7 +17,14 @@ func _process(_delta: float) -> void:
 	if not _is_following or not is_instance_valid(_active_target):
 		return
 	var mouse_pos: Vector2 = _active_target.get_global_mouse_position()
-	_active_target.global_position = _active_target.global_position.lerp(mouse_pos, follow_easing)
+	var centered_target_position: Vector2 = _get_global_position_for_center(
+		_active_target,
+		mouse_pos
+	)
+	_active_target.global_position = _active_target.global_position.lerp(
+		centered_target_position,
+		follow_easing
+	)
 
 
 func _on_drag_started(
@@ -51,7 +58,13 @@ func _on_drop_completed(
 	var target_control: Control = target_node as Control
 	if is_valid_drop and receptor_node is Control:
 		var receptor_control: Control = receptor_node as Control
-		_tween_to_position(target_control, receptor_control.global_position, snap_duration)
+		target_control.scale = Vector2.ONE
+		var receptor_center: Vector2 = _get_control_center(receptor_control)
+		var destination: Vector2 = _get_global_position_for_center(
+			target_control,
+			receptor_center
+		)
+		_tween_to_position(target_control, destination, snap_duration)
 	else:
 		_tween_to_position(target_control, _drag_origin, return_duration)
 
@@ -73,3 +86,14 @@ func _tween_to_position(target: Control, destination: Vector2, duration: float) 
 func _on_tween_finished() -> void:
 	_active_target = null
 	_active_tween = null
+
+
+func _get_control_center(control: Control) -> Vector2:
+	var local_center: Vector2 = control.size * 0.5
+	return control.global_position + ((local_center - control.pivot_offset) * control.scale)
+
+
+func _get_global_position_for_center(control: Control, center: Vector2) -> Vector2:
+	var local_center: Vector2 = control.size * 0.5
+	var center_offset: Vector2 = (local_center - control.pivot_offset) * control.scale
+	return center - center_offset
