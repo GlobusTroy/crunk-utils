@@ -7,7 +7,7 @@ extends Resource
 @export var accept_all: bool = true
 
 func is_valid_drop(
-	_draggable_component: DragDropDraggableComponent,
+	_draggable_component: Node,
 	_dragged_target_node: Node
 ) -> bool:
 	return accept_all

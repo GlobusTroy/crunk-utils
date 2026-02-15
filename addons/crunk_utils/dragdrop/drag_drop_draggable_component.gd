@@ -1,24 +1,48 @@
-class_name DragDropDraggableComponent
+class_name DragDropDraggableBaseComponent
 extends Node
 
-## Base class for draggable components.
-signal drag_started(component: DragDropDraggableComponent, target_node: Node)
-signal drag_ended(component: DragDropDraggableComponent, target_node: Node)
-signal draggable_hover_start(component: DragDropDraggableComponent, target_node: Node)
-signal draggable_hover_end(component: DragDropDraggableComponent, target_node: Node)
+## Base draggable marker component.
+
+@export var enabled: bool = true
+@export var input_button: MouseButton = MOUSE_BUTTON_LEFT
+
+var translator: InputSignalTranslator = null
+var _input_source_node: Node = null
 
 
 func _ready() -> void:
+	_input_source_node = _resolve_input_source_node()
+	if _input_source_node == null:
+		push_error("DragDropDraggableBaseComponent: Could not resolve input source node")
+		return
+	translator = _create_translator()
+	if translator == null:
+		push_error("DragDropDraggableBaseComponent: _create_translator() returned null")
+		return
+	translator.bind(_input_source_node, DragDropInputBus.get_instance().get_signal_bus())
 	_register_with_system.call_deferred()
 
 
 func _exit_tree() -> void:
+	if translator:
+		translator.unbind()
 	_unregister_from_system()
 
 
-## Get the target node for this draggable component (default: parent)
-func _get_target_node() -> Node:
+func get_dragged_node() -> Node:
 	return get_parent() if get_parent() else self
+
+
+func get_input_source_node() -> Node:
+	return _input_source_node
+
+
+func _resolve_input_source_node() -> Node:
+	return get_parent() if get_parent() else self
+
+
+func _create_translator() -> RefCounted:
+	return null
 
 
 ## Register this draggable with all system controllers in the group
@@ -27,7 +51,7 @@ func _register_with_system() -> void:
 	for controller: DragDropSystemController in controllers:
 		if not is_instance_of(controller, DragDropSystemController):
 			continue
-		controller.register_draggable(self)
+		controller.register_draggable_component(self)
 
 
 ## Unregister this draggable from all system controllers in the group
@@ -36,24 +60,4 @@ func _unregister_from_system() -> void:
 	for controller: DragDropSystemController in controllers:
 		if not is_instance_of(controller, DragDropSystemController):
 			continue
-		controller.unregister_draggable(self)
-
-
-## Emit drag started signal
-func emit_drag_started() -> void:
-	drag_started.emit(self, _get_target_node())
-
-
-## Emit drag ended signal
-func emit_drag_ended() -> void:
-	drag_ended.emit(self, _get_target_node())
-
-
-## Emit draggable hover start signal
-func emit_draggable_hover_start() -> void:
-	draggable_hover_start.emit(self, _get_target_node())
-
-
-## Emit draggable hover end signal
-func emit_draggable_hover_end() -> void:
-	draggable_hover_end.emit(self, _get_target_node())
+		controller.unregister_draggable_component(self)

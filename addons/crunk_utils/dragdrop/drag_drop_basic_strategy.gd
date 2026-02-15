@@ -3,56 +3,31 @@ extends DragDropSystemStrategyBase
 
 ## Default drag-drop strategy with cursor following, snap-to-receptor, and return-to-origin.
 
-@export var follow_easing: float = 0.15
 @export var snap_duration: float = 0.2
 @export var return_duration: float = 0.3
 
 var _drag_origin: Vector2 = Vector2.ZERO
 var _active_target: Control = null
 var _active_tween: Tween = null
-var _is_following: bool = false
 
 
-func _process(_delta: float) -> void:
-	if not _is_following or not is_instance_valid(_active_target):
-		return
-	var mouse_pos: Vector2 = _active_target.get_global_mouse_position()
-	var centered_target_position: Vector2 = _get_global_position_for_center(
-		_active_target,
-		mouse_pos
-	)
-	_active_target.global_position = _active_target.global_position.lerp(
-		centered_target_position,
-		follow_easing
-	)
-
-
-func _on_drag_started(
-	draggable: DragDropDraggableComponent, target_node: Node
-) -> void:
+func _on_drag_started(_draggable: Node, target_node: Node) -> void:
 	if not target_node is Control:
 		return
 	_kill_active_tween()
 	_active_target = target_node as Control
 	_drag_origin = _active_target.global_position
-	_is_following = true
 
 
-func _on_drag_ended(
-	_draggable: DragDropDraggableComponent, target_node: Node
-) -> void:
-	_is_following = false
-	if not target_node is Control:
-		return
-	_tween_to_position(target_node as Control, _drag_origin, return_duration)
+func _on_drag_updated(_draggable: Node, _target_node: Node, _mouse_pos: Vector2) -> void:
+	pass
 
 
 func _on_drop_completed(
-	_draggable: DragDropDraggableComponent, target_node: Node,
-	_receptor: DragDropReceptorComponent, receptor_node: Node,
+	_draggable: Node, target_node: Node,
+	receptor_node: Node,
 	is_valid_drop: bool
 ) -> void:
-	_is_following = false
 	if not target_node is Control:
 		return
 	var target_control: Control = target_node as Control

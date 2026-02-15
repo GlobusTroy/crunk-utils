@@ -1,212 +1,131 @@
 class_name DragDropSystemController
 extends Node
 
-## Central controller for managing drag and drop operations.
-## Handles global drag state and coordinates between draggable and receptor nodes.
+## Scene-tree orchestrator for drag/drop behavior.
 
 const GROUP_NAME: String = "drag_drop_system_controllers"
 
-signal drag_started(draggable_component: DragDropDraggableComponent, target_node: Node)
-signal drag_ended(draggable_component: DragDropDraggableComponent, target_node: Node)
-signal drop_completed(
-	draggable_component: DragDropDraggableComponent, target_node: Node, 
-	receptor_component: DragDropReceptorComponent, receptor_node: Node,
-	is_valid_drop: bool
-)
-signal drop_hover_start(
-	draggable_component: DragDropDraggableComponent, target_node: Node, 
-	receptor_component: DragDropReceptorComponent, receptor_node: Node, is_valid_drop: bool
-)
-signal drop_hover_end(
-	draggable_component: DragDropDraggableComponent, target_node: Node, 
-	receptor_component: DragDropReceptorComponent, receptor_node: Node, is_valid_drop: bool
-)
-signal draggable_hover_start(draggable_component: DragDropDraggableComponent, target_node: Node)
-signal draggable_hover_end(draggable_component: DragDropDraggableComponent, target_node: Node)
-signal receptor_hover_start(receptor_component: DragDropReceptorComponent, target_node: Node)
-signal receptor_hover_end(receptor_component: DragDropReceptorComponent, target_node: Node)
+signal drag_started(draggable_component: Node, dragged_node: Node)
+signal drag_updated(draggable_component: Node, dragged_node: Node, mouse_pos: Vector2)
+signal drop_completed(draggable_component: Node, dragged_node: Node, receptor_component: Node, is_valid_drop: bool)
 
-var current_draggable: DragDropDraggableComponent = null
-var current_draggable_target: Node = null
-var current_receptor: DragDropReceptorComponent = null
-var current_receptor_target: Node = null
-var is_dragging: bool = false
+@export var drag_overlay: Control = null
 
-var current_hovered_draggable: DragDropDraggableComponent = null
-var current_hovered_draggable_target: Node = null
+var _event_translator: DragDropEventTranslator = null
+var _active_follow_component: FollowPointComponent = null
+var _active_dragged_node: Node = null
+var _origin_parent: Node = null
+var _origin_index: int = -1
+var _is_dragging: bool = false
 
 func _ready() -> void:
 	add_to_group(GROUP_NAME)
-
-func register_draggable(draggable: DragDropDraggableComponent) -> void:
-	_connect_draggable_signals(draggable)
-
-
-func register_receptor(receptor: DragDropReceptorComponent) -> void:
-	_connect_receptor_signals(receptor)
-
-
-func unregister_draggable(draggable: DragDropDraggableComponent) -> void:
-	_disconnect_draggable_signals(draggable)
+	_event_translator = DragDropEventTranslator.new()
+	_event_translator.bind_bus(DragDropInputBus.get_instance().get_signal_bus())
+	_event_translator.drag_started.connect(_on_drag_started)
+	_event_translator.drag_updated.connect(_on_drag_updated)
+	_event_translator.drop_requested.connect(_on_drop_requested)
+	set_process(false)
 
 
-func unregister_receptor(receptor: DragDropReceptorComponent) -> void:
-	_disconnect_receptor_signals(receptor)
-
-func get_is_dragging() -> bool:
-	return is_dragging
-
-func start_drag(draggable: DragDropDraggableComponent, target_node: Node) -> void:
-	current_draggable = draggable
-	current_draggable_target = target_node
-	is_dragging = true
-	drag_started.emit(draggable, target_node)
+func _exit_tree() -> void:
+	if _event_translator:
+		_event_translator.dispose()
 
 
-func end_drag() -> void:
-	if not is_dragging or current_draggable == null:
+func register_draggable_component(draggable: DragDropDraggableBaseComponent) -> void:
+	if _event_translator == null or draggable == null:
 		return
-	
-	is_dragging = false
-	if not is_instance_valid(current_receptor):
-		drag_ended.emit(current_draggable, current_draggable_target)
-	else:
-		_emit_drop_hover_end(current_receptor, current_receptor_target)
-		var is_valid_drop: bool = current_receptor.can_receive_drop(
-			current_draggable, current_draggable_target
-		)
-		drop_completed.emit(
-			current_draggable, current_draggable_target, 
-			current_receptor, current_receptor_target, 
-			is_valid_drop
-		)
-		clear_current_receptor()
-	current_draggable = null
-	current_draggable_target = null
-
-	var is_component_valid: bool = is_instance_valid(current_hovered_draggable) 
-	var is_target_valid: bool = is_instance_valid(current_hovered_draggable_target)
-	if is_component_valid and is_target_valid:
-		draggable_hover_start.emit(current_hovered_draggable, current_hovered_draggable_target)
-
-	is_component_valid = is_instance_valid(current_receptor)
-	is_target_valid = is_instance_valid(current_receptor_target)
-	if is_component_valid and is_target_valid:
-		receptor_hover_start.emit(current_receptor, current_receptor_target)
-	
-func clear_current_receptor() -> void:
-	if current_receptor:
-		current_receptor = null
-		current_receptor_target = null
-
-func _connect_draggable_signals(draggable: DragDropDraggableComponent) -> void:
-	draggable.drag_started.connect(_on_draggable_drag_started)
-	draggable.drag_ended.connect(_on_draggable_drag_ended)
-	draggable.draggable_hover_start.connect(_on_draggable_hover_start)
-	draggable.draggable_hover_end.connect(_on_draggable_hover_end)
+	_event_translator.register_draggable(draggable, draggable.get_input_source_node())
 
 
-func _connect_receptor_signals(receptor: DragDropReceptorComponent) -> void:
-	receptor.receptor_hover_start.connect(_on_receptor_hover_start)
-	receptor.receptor_hover_end.connect(_on_receptor_hover_end)
-
-
-func _disconnect_draggable_signals(draggable: DragDropDraggableComponent) -> void:
-	draggable.drag_started.disconnect(_on_draggable_drag_started)
-	draggable.drag_ended.disconnect(_on_draggable_drag_ended)
-	draggable.draggable_hover_start.disconnect(_on_draggable_hover_start)
-	draggable.draggable_hover_end.disconnect(_on_draggable_hover_end)
-
-
-func _disconnect_receptor_signals(receptor: DragDropReceptorComponent) -> void:
-	receptor.receptor_hover_start.disconnect(_on_receptor_hover_start)
-	receptor.receptor_hover_end.disconnect(_on_receptor_hover_end)
-
-
-func _on_draggable_drag_started(draggable: DragDropDraggableComponent, target_node: Node) -> void:
-	if is_dragging:
+func unregister_draggable_component(draggable: DragDropDraggableBaseComponent) -> void:
+	if _event_translator == null or draggable == null:
 		return
-	start_drag(draggable, target_node)
+	_event_translator.unregister_draggable(draggable.get_input_source_node())
 
 
-func _on_draggable_drag_ended(draggable: DragDropDraggableComponent, _target_node: Node) -> void:
-	if not is_dragging or draggable != current_draggable:
+func register_receptor_component(receptor: DragDropReceptorBaseComponent) -> void:
+	if _event_translator == null or receptor == null:
 		return
-	end_drag()
+	_event_translator.register_receptor(receptor, receptor.get_input_source_node())
 
-func _on_receptor_hover_start(receptor: DragDropReceptorComponent, receptor_target: Node) -> void:
-	if current_receptor == receptor:
+
+func unregister_receptor_component(receptor: DragDropReceptorBaseComponent) -> void:
+	if _event_translator == null or receptor == null:
 		return
-	if is_instance_valid(current_receptor):
-		if is_dragging:
-			_emit_drop_hover_end()
-		else:
-			receptor_hover_end.emit(current_receptor, current_receptor_target)
-
-	current_receptor = receptor
-	current_receptor_target = receptor_target
-	if is_dragging and is_instance_valid(current_draggable):
-		_emit_drop_hover_start()
-	else:
-		receptor_hover_start.emit(receptor, receptor_target)
+	_event_translator.unregister_receptor(receptor.get_input_source_node())
 
 
-func _on_receptor_hover_end(receptor: DragDropReceptorComponent, receptor_target: Node) -> void:
-	if current_receptor != receptor:
-		return
-	if is_dragging:
-		_emit_drop_hover_end(current_receptor, current_receptor_target)
-	else:
-		receptor_hover_end.emit(receptor, receptor_target)
-	clear_current_receptor()
+func _on_drag_started(draggable_component: Node, dragged_node: Node) -> void:
+	_is_dragging = true
+	_active_dragged_node = dragged_node
+	_origin_parent = _event_translator.get_drag_origin_parent()
+	_origin_index = _event_translator.get_drag_origin_index()
+	if drag_overlay and dragged_node.get_parent() != drag_overlay:
+		dragged_node.reparent(drag_overlay, true)
+	_active_follow_component = _ensure_follow_component(dragged_node)
+	drag_started.emit(draggable_component, dragged_node)
+	set_process(true)
 
 
-## Emit drop hover start signal when draggable enters a receptor
-func _emit_drop_hover_start() -> void:
-	var is_valid_drop : bool = current_receptor.can_receive_drop(
-			current_draggable, 
-			current_draggable_target
-		)
-	drop_hover_start.emit(
-		current_draggable, current_draggable_target, 
-		current_receptor, current_receptor_target, is_valid_drop
-	)
+func _on_drag_updated(draggable_component: Node, dragged_node: Node, mouse_pos: Vector2) -> void:
+	if _active_follow_component:
+		_active_follow_component.set_target_global_position(mouse_pos)
+	drag_updated.emit(draggable_component, dragged_node, mouse_pos)
 
 
-## Emit drop hover end signal when draggable exits a receptor
-func _emit_drop_hover_end(
-	receptor: DragDropReceptorComponent = current_receptor,
-	receptor_target: Node = current_receptor_target
+func _on_drop_requested(
+	draggable_component: DragDropDraggableBaseComponent,
+	dragged_node: Node,
+	receptor_component: DragDropReceptorBaseComponent
 ) -> void:
-	if not is_instance_valid(receptor) or not is_instance_valid(current_draggable):
+	set_process(false)
+	_is_dragging = false
+	var is_valid_drop: bool = false
+	if receptor_component and receptor_component.can_accept(draggable_component, dragged_node):
+		is_valid_drop = true
+		var drop_container: Node = receptor_component.get_drop_container()
+		if drop_container:
+			dragged_node.reparent(drop_container, true)
+			if drop_container is Container:
+				(drop_container as Container).queue_sort()
+	else:
+		_restore_to_origin(dragged_node)
+	if _active_follow_component:
+		_active_follow_component.set_enabled(false)
+	drop_completed.emit(draggable_component, dragged_node, receptor_component, is_valid_drop)
+	_active_follow_component = null
+	_active_dragged_node = null
+
+
+func _process(_delta: float) -> void:
+	if not _is_dragging or _event_translator == null or _active_dragged_node == null:
+		set_process(false)
 		return
-	var is_valid_drop: bool = receptor.can_receive_drop(
-		current_draggable,
-		current_draggable_target
-	)
-	drop_hover_end.emit(
-		current_draggable, current_draggable_target,
-		receptor, receptor_target, is_valid_drop
-	)
+	if _active_dragged_node is CanvasItem:
+		_event_translator.push_drag_update((_active_dragged_node as CanvasItem).get_global_mouse_position())
 
 
-## Handle draggable hover start - only emit if not dragging
-func _on_draggable_hover_start(draggable: DragDropDraggableComponent, target_node: Node) -> void:
-	if draggable == current_hovered_draggable:
+func _ensure_follow_component(target_node: Node) -> FollowPointComponent:
+	for child: Node in target_node.get_children():
+		if child is FollowPointComponent:
+			var existing: FollowPointComponent = child as FollowPointComponent
+			existing.set_enabled(true)
+			return existing
+	var follow_component: FollowPointComponent = FollowPointComponent.new()
+	target_node.add_child(follow_component)
+	follow_component.set_enabled(true)
+	return follow_component
+
+
+func _restore_to_origin(dragged_node: Node) -> void:
+	if _origin_parent == null:
 		return
-	if is_instance_valid(current_hovered_draggable) and not is_dragging:
-		draggable_hover_end.emit(current_hovered_draggable, current_hovered_draggable_target)
-	current_hovered_draggable = draggable
-	current_hovered_draggable_target = target_node
-	if not is_dragging:
-		draggable_hover_start.emit(draggable, target_node)
-
-
-## Handle draggable hover end - only emit if not dragging
-func _on_draggable_hover_end(draggable: DragDropDraggableComponent, target_node: Node) -> void:
-	if current_hovered_draggable == draggable:
-		current_hovered_draggable = null
-		current_hovered_draggable_target = null
-	if is_dragging:
+	if not is_instance_valid(_origin_parent):
 		return
-	draggable_hover_end.emit(draggable, target_node)
+	dragged_node.reparent(_origin_parent, true)
+	if _origin_index >= 0 and _origin_index < _origin_parent.get_child_count():
+		_origin_parent.move_child(dragged_node, _origin_index)
+	if _origin_parent is Container:
+		(_origin_parent as Container).queue_sort()

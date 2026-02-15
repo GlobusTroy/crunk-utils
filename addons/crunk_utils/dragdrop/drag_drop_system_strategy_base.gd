@@ -1,9 +1,7 @@
 class_name DragDropSystemStrategyBase
 extends Node
 
-## Abstract base class for drag-drop system strategies.
-## Connects to a DragDropSystemController and provides virtual handler methods
-## for each signal. Subclass this to implement custom drag/drop behaviors.
+## Abstract base class for drag-drop strategies.
 
 @export var controller: DragDropSystemController
 
@@ -28,14 +26,8 @@ func _discover_controller() -> void:
 
 func _connect_controller_signals() -> void:
 	controller.drag_started.connect(_on_drag_started)
-	controller.drag_ended.connect(_on_drag_ended)
+	controller.drag_updated.connect(_on_drag_updated)
 	controller.drop_completed.connect(_on_drop_completed)
-	controller.drop_hover_start.connect(_on_drop_hover_start)
-	controller.drop_hover_end.connect(_on_drop_hover_end)
-	controller.draggable_hover_start.connect(_on_draggable_hover_start)
-	controller.draggable_hover_end.connect(_on_draggable_hover_end)
-	controller.receptor_hover_start.connect(_on_receptor_hover_start)
-	controller.receptor_hover_end.connect(_on_receptor_hover_end)
 
 
 func _exit_tree() -> void:
@@ -45,73 +37,27 @@ func _exit_tree() -> void:
 
 func _disconnect_controller_signals() -> void:
 	controller.drag_started.disconnect(_on_drag_started)
-	controller.drag_ended.disconnect(_on_drag_ended)
+	controller.drag_updated.disconnect(_on_drag_updated)
 	controller.drop_completed.disconnect(_on_drop_completed)
-	controller.drop_hover_start.disconnect(_on_drop_hover_start)
-	controller.drop_hover_end.disconnect(_on_drop_hover_end)
-	controller.draggable_hover_start.disconnect(_on_draggable_hover_start)
-	controller.draggable_hover_end.disconnect(_on_draggable_hover_end)
-	controller.receptor_hover_start.disconnect(_on_receptor_hover_start)
-	controller.receptor_hover_end.disconnect(_on_receptor_hover_end)
 
 
 ## Virtual handlers — override in subclasses
 
 func _on_drag_started(
-	_draggable: DragDropDraggableComponent, _target_node: Node
+	_draggable: Node, _dragged_node: Node
 ) -> void:
 	pass
 
 
-func _on_drag_ended(
-	_draggable: DragDropDraggableComponent, _target_node: Node
+func _on_drag_updated(
+	_draggable: Node, _dragged_node: Node, _mouse_pos: Vector2
 ) -> void:
 	pass
 
 
 func _on_drop_completed(
-	_draggable: DragDropDraggableComponent, _target_node: Node,
-	_receptor: DragDropReceptorComponent, _receptor_node: Node,
+	_draggable: Node, _dragged_node: Node,
+	_receptor: Node,
 	_is_valid_drop: bool
-) -> void:
-	pass
-
-
-func _on_drop_hover_start(
-	_draggable: DragDropDraggableComponent, _target_node: Node,
-	_receptor: DragDropReceptorComponent, _receptor_node: Node,
-	_is_valid_drop: bool
-) -> void:
-	pass
-
-
-func _on_drop_hover_end(
-	_draggable: DragDropDraggableComponent, _target_node: Node,
-	_receptor: DragDropReceptorComponent, _receptor_node: Node,
-	_is_valid_drop: bool
-) -> void:
-	pass
-
-
-func _on_draggable_hover_start(
-	_draggable: DragDropDraggableComponent, _target_node: Node
-) -> void:
-	pass
-
-
-func _on_draggable_hover_end(
-	_draggable: DragDropDraggableComponent, _target_node: Node
-) -> void:
-	pass
-
-
-func _on_receptor_hover_start(
-	_receptor: DragDropReceptorComponent, _target_node: Node
-) -> void:
-	pass
-
-
-func _on_receptor_hover_end(
-	_receptor: DragDropReceptorComponent, _target_node: Node
 ) -> void:
 	pass

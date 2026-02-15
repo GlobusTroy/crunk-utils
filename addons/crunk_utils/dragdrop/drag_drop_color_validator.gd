@@ -14,7 +14,7 @@ enum BasePolicy {
 
 
 func is_valid_drop(
-	_draggable_component: DragDropDraggableComponent,
+	_draggable_component: Node,
 	dragged_target_node: Node
 ) -> bool:
 	var dragged_color: Color = _get_color(dragged_target_node)

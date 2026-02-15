@@ -10,69 +10,32 @@ const DRAGGABLE_ACTIVE_Z_INDEX: int = 100
 var _receptor_base_modulates: Dictionary = {}
 
 
-func _on_draggable_hover_start(
-	_draggable: DragDropDraggableComponent, target_node: Node
-) -> void:
+func _on_drag_started(_draggable: Node, target_node: Node) -> void:
 	if target_node is Control:
 		var control: Control = target_node as Control
 		_prepare_control_pivot(control)
 		_tween_scale(control, HOVER_SCALE)
+		control.z_index = DRAGGABLE_ACTIVE_Z_INDEX
 
 
-func _on_draggable_hover_end(
-	_draggable: DragDropDraggableComponent, target_node: Node
+func _on_drag_updated(_draggable: Node, _target_node: Node, _mouse_pos: Vector2) -> void:
+	pass
+
+
+func _on_drop_completed(
+	_d: Node, target_node: Node,
+	receptor_node: Node, valid_drop: bool
 ) -> void:
 	if target_node is Control:
 		var control: Control = target_node as Control
 		_prepare_control_pivot(control)
 		_tween_scale(control, Vector2.ONE)
-
-
-func _on_drop_hover_start(
-	_d: DragDropDraggableComponent, _tn: Node,
-	_r: DragDropReceptorComponent, receptor_node: Node,
-	is_valid_drop: bool
-) -> void:
+		control.z_index = DRAGGABLE_IDLE_Z_INDEX
 	if receptor_node is CanvasItem:
 		var receptor_item: CanvasItem = receptor_node as CanvasItem
 		_store_receptor_base_modulate(receptor_item)
-		var tint: Color = VALID_MODULATE if is_valid_drop else INVALID_MODULATE
+		var tint: Color = VALID_MODULATE if valid_drop else INVALID_MODULATE
 		_tween_modulate(receptor_item, tint)
-
-
-func _on_drop_hover_end(
-	_d: DragDropDraggableComponent, _tn: Node,
-	_r: DragDropReceptorComponent, receptor_node: Node,
-	_is_valid: bool
-) -> void:
-	if receptor_node is CanvasItem:
-		_reset_receptor_modulate(receptor_node as CanvasItem)
-
-
-func _on_drag_started(
-	_draggable: DragDropDraggableComponent, target_node: Node
-) -> void:
-	if target_node is Control:
-		var control: Control = target_node as Control
-		control.z_index = DRAGGABLE_ACTIVE_Z_INDEX
-
-
-func _on_drag_ended(
-	_draggable: DragDropDraggableComponent, target_node: Node
-) -> void:
-	if target_node is Control:
-		var control: Control = target_node as Control
-		control.z_index = DRAGGABLE_IDLE_Z_INDEX
-	_reset_all_receptor_modulates()
-
-
-func _on_drop_completed(
-	_d: DragDropDraggableComponent, target_node: Node,
-	_r: DragDropReceptorComponent, _rn: Node, _valid: bool
-) -> void:
-	if target_node is Control:
-		var control: Control = target_node as Control
-		control.z_index = DRAGGABLE_IDLE_Z_INDEX
 	_reset_all_receptor_modulates()
 
 

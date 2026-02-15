@@ -1,37 +1,54 @@
-class_name DragDropReceptorComponent
+class_name DragDropReceptorBaseComponent
 extends Node
 
-## Abstract base class for receptor components.
-## Defines signals and interface for drop operations.
+## Base receptor marker component.
 
-signal receptor_hover_start(receptor_component: DragDropReceptorComponent, target_node: Node)
-signal receptor_hover_end(receptor_component: DragDropReceptorComponent, target_node: Node)
+@export var enabled: bool = true
+@export var validator: DragDropValidatorBase = null
 
-@export var validator: DragDropValidatorBase
+var translator: InputSignalTranslator = null
+var _input_source_node: Node = null
 
 
 func _ready() -> void:
+	_input_source_node = _resolve_input_source_node()
+	if _input_source_node == null:
+		push_error("DragDropReceptorBaseComponent: Could not resolve input source node")
+		return
+	translator = _create_translator()
+	if translator == null:
+		push_error("DragDropReceptorBaseComponent: _create_translator() returned null")
+		return
+	translator.bind(_input_source_node, DragDropInputBus.get_instance().get_signal_bus())
 	_register_with_system.call_deferred()
 
 
 func _exit_tree() -> void:
+	if translator:
+		translator.unbind()
 	_unregister_from_system()
 
 
-## Check if this receptor can receive a specific draggable
-func can_receive_drop(
-	draggable_component: DragDropDraggableComponent,
-	dragged_target_node: Node
-) -> bool:
-	if not validator:
-		push_error("DragDropReceptorComponent: validator is null. Assign a DragDropValidatorBase resource.")
-		return false
+func can_accept(draggable_component: Node, dragged_target_node: Node) -> bool:
+	if validator == null:
+		return true
 	return validator.is_valid_drop(draggable_component, dragged_target_node)
 
 
-## Get the target node for this receptor component (default: parent)
-func _get_target_node() -> Node:
+func get_input_source_node() -> Node:
+	return _input_source_node
+
+
+func get_drop_container() -> Node:
 	return get_parent() if get_parent() else self
+
+
+func _resolve_input_source_node() -> Node:
+	return get_parent() if get_parent() else self
+
+
+func _create_translator() -> RefCounted:
+	return null
 
 
 ## Register this receptor with all system controllers in the group
@@ -40,7 +57,7 @@ func _register_with_system() -> void:
 	for controller: DragDropSystemController in controllers:
 		if not is_instance_of(controller, DragDropSystemController):
 			continue
-		controller.register_receptor(self)
+		controller.register_receptor_component(self)
 
 
 ## Unregister this receptor from all system controllers in the group
@@ -49,14 +66,4 @@ func _unregister_from_system() -> void:
 	for controller: DragDropSystemController in controllers:
 		if not is_instance_of(controller, DragDropSystemController):
 			continue
-		controller.unregister_receptor(self)
-
-
-## Emit receptor hover start signal
-func emit_receptor_hover_start() -> void:
-	receptor_hover_start.emit(self, _get_target_node())
-
-
-## Emit receptor hover end signal
-func emit_receptor_hover_end() -> void:
-	receptor_hover_end.emit(self, _get_target_node())
+		controller.unregister_receptor_component(self)
