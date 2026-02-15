@@ -44,10 +44,3 @@ func _get_target_node() -> Control:
 ## Check if currently being hovered
 func get_is_hovered() -> bool:
 	return _is_hovered
-
-## Override can_receive_drop with Control-specific validation
-func can_receive_drop(
-	_draggable_component: DragDropDraggableComponent, 
-	_dragged_target_node: Node
-) -> bool:
-	return true

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="DragDropColorValidator" load_steps=2 format=3 uid="uid://dqr8s5t2xm1np"]
+
+[ext_resource type="Script" path="res://addons/crunk_utils/dragdrop/drag_drop_color_validator.gd" id="1_validator"]
+
+[resource]
+script = ExtResource("1_validator")
+base_policy = 1
+color_list = Array[Color]([Color(0, 0, 1, 1)])

@@ -7,6 +7,8 @@ extends Node
 signal receptor_hover_start(receptor_component: DragDropReceptorComponent, target_node: Node)
 signal receptor_hover_end(receptor_component: DragDropReceptorComponent, target_node: Node)
 
+@export var validator: DragDropValidatorBase = DragDropValidatorBase.new()
+
 
 func _ready() -> void:
 	_register_with_system.call_deferred()
@@ -18,10 +20,13 @@ func _exit_tree() -> void:
 
 ## Check if this receptor can receive a specific draggable
 func can_receive_drop(
-	_draggable_component: DragDropDraggableComponent, 	
-	_dragged_target_node: Node
+	draggable_component: DragDropDraggableComponent,
+	dragged_target_node: Node
 ) -> bool:
-	return true
+	if not validator:
+		push_error("DragDropReceptorComponent: validator is null. Assign a DragDropValidatorBase resource.")
+		return false
+	return validator.is_valid_drop(draggable_component, dragged_target_node)
 
 
 ## Get the target node for this receptor component (default: parent)
