@@ -1,7 +1,3 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
 CrunkUtils is a reusable Godot 4.6 addon library written in GDScript. The main addon lives in `addons/crunk_utils/`. The project uses GL Compatibility rendering and Jolt Physics.
