@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# <NOTE_TO_AGENTS> 
+# Run this script IF AND ONLY IF you just created a completely NEW AGENTS.md file in the project
+# If an AGENTS.md file was modified but was not JUST CREATED, you do not need to run this script
+# </NOTE_TO_AGENTS>
+
 # Create soft links from all AGENTS.md files to CLAUDE.md in the same directories
 # Usage: ./link_agents_to_claude.sh [directory]
 # If no directory specified, uses current directory
