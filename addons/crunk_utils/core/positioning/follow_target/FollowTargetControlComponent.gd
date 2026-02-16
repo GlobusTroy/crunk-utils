@@ -21,6 +21,12 @@ enum FollowerType {
 	PARENT,
 }
 
+enum FollowerPositionType {
+	CENTERED,
+	PIVOT,
+	GLOBAL_POSITION	
+}
+
 ## Determines how the target position is calculated.
 enum TargetPositionType {
 	## Uses the center of the target control (via injected proxy component)
@@ -34,6 +40,8 @@ const TRANSFORM_NOTIFIER_PREFAB : PackedScene = preload("res://addons/crunk_util
 @export_category("Targets")
 ## Which node should follow the target (self or parent)
 @export var follower_type: FollowerType = FollowerType.PARENT
+## How to calculate the follower position
+@export var follower_position_type: FollowerPositionType = FollowerPositionType.CENTERED
 ## How to calculate the target position
 @export var target_position_type: TargetPositionType = TargetPositionType.CENTERED_PROXY
 ## The control that this component should follow
@@ -43,7 +51,7 @@ const TRANSFORM_NOTIFIER_PREFAB : PackedScene = preload("res://addons/crunk_util
 ## [param val]: The control to follow, or null to disable following
 func _set_followed_control(val: Control) -> void:
 	followed_control = val
-	_injected_followed_component.reparent(followed_control)
+	_initialize_injected_followed_component()
 
 ## Whether following is currently enabled
 @export var is_follow_enabled: bool = true : set = _set_is_follow_enabled 
@@ -53,7 +61,7 @@ func _set_followed_control(val: Control) -> void:
 func _set_is_follow_enabled(val: bool) -> void:
 	is_follow_enabled = val
 	if is_follow_enabled:
-		if _is_within_epsilon():
+		if _is_at_destination():
 			_set_notify_transform(true)
 		else:
 			set_process(true)
@@ -83,8 +91,17 @@ func _ready() -> void:
 ## Creates and configures the injected component for centered positioning.
 ## This component is added to the followed control to provide center positioning.
 func _initialize_injected_followed_component() -> void:
-	_injected_followed_component = TRANSFORM_NOTIFIER_PREFAB.instantiate()
-	(followed_control if followed_control else self).add_child(_injected_followed_component)
+	if not _injected_followed_component:
+		_injected_followed_component = TRANSFORM_NOTIFIER_PREFAB.instantiate() as TransformNotifier
+
+	if not _injected_followed_component.transform_changed.is_connected(_on_injected_transform_changed):
+		_injected_followed_component.transform_changed.connect(_on_injected_transform_changed)
+
+	var host: Control = followed_control if followed_control else self
+	if _injected_followed_component.get_parent() == null:
+		host.add_child(_injected_followed_component)
+	elif _injected_followed_component.get_parent() != host:
+		_injected_followed_component.reparent(host)
 
 ## Gets the control that should be moved based on the follower_type setting.
 ## [return]: The control to move, or null if configuration is invalid
@@ -99,22 +116,31 @@ func _set_notify_transform(val: bool) -> void:
 	set_notify_transform(val)
 	if _injected_followed_component:
 		_injected_followed_component.set_notify_transform(val)
+
 ## Handles transform change notifications for performance optimization.
 ## [param what]: The notification type
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_TRANSFORM_CHANGED and not _is_within_epsilon():
+	if what == NOTIFICATION_TRANSFORM_CHANGED and not _is_at_destination():
 		_set_notify_transform(false)
 		set_process(true) 
 
+## Handles transform changes from the injected target notifier.
+## Reactivates process when target movement exceeds epsilon distance.
+func _on_injected_transform_changed() -> void:
+	if not is_follow_enabled or not followed_control:
+		return
+
+	if not _is_at_destination():
+		_set_notify_transform(false)
+		set_process(true)
+
 ## Checks if the follower is within the epsilon threshold of the target.
 ## [return]: True if close enough to target, false otherwise
-func _is_within_epsilon() -> bool:
+func _is_at_destination() -> bool:
 	var follower: Control = _get_follower()
-	if not follower:
+	if not follower or not motion_interpolator:
 		return true
-	if not motion_interpolator:
-		return true
-	return motion_interpolator.is_at_destination(_get_target_position(), follower)
+	return motion_interpolator.is_at_destination(_get_follower_position(), _get_target_position())
 
 ## Calculates the target position based on target_position_type setting.
 ## [return]: The target position in global coordinates
@@ -134,6 +160,19 @@ func _get_target_position() -> Vector2:
 		_: 
 			return followed_control.global_position
 
+func _get_follower_position_offset() -> Vector2:
+	var follower: Control = _get_follower()
+	if not follower:
+		return Vector2.ZERO
+	match follower_position_type:
+		FollowerPositionType.CENTERED: return follower.size / 2
+		FollowerPositionType.PIVOT: return follower.get_combined_pivot_offset()
+		FollowerPositionType.GLOBAL_POSITION: return Vector2.ZERO
+		_: return Vector2.ZERO 
+
+func _get_follower_position() -> Vector2:
+	return _get_follower().global_position + _get_follower_position_offset()
+
 func _process(delta: float) -> void:
 	if not is_follow_enabled or not followed_control: return
 	
@@ -141,10 +180,12 @@ func _process(delta: float) -> void:
 	if not apply_to: return
 	if not motion_interpolator: return
 	
+	var current_pos : Vector2 = _get_follower_position()
 	var target_pos : Vector2 = _get_target_position()
-	apply_to.global_position = motion_interpolator.get_next_frame_position(target_pos, apply_to, delta)
+	var next_pos : Vector2 = motion_interpolator.get_next_frame_position(current_pos, target_pos, delta)
+	apply_to.global_position = next_pos - _get_follower_position_offset()
 	
-	if motion_interpolator.is_at_destination(target_pos, apply_to):
+	if motion_interpolator.is_at_destination(next_pos, target_pos):
 		_snap_to_target()
 	
 ## Instantly snaps the follower to the target position and optimizes performance.
