@@ -6,11 +6,11 @@ crunk_utils is a modular Godot addon providing composable utilities for input tr
 
 ## System Map
 
-| System Path | Owns | Does NOT Own |
-|---|---|---|
-| `core/input/` | InputBus, InputTranslator, ControlTranslator | No drag/drop semantics |
-| `core/positioning/follow_point/` | SmoothFollowComponent | No drag/drop state |
-| `dragdrop/` | D&D orchestration, state, validation, strategies | No generic input primitives |
+| System Path                      | Owns                                             | Does NOT Own                |
+| ----------------------------------| --------------------------------------------------| -----------------------------|
+| `core/input/`                    | InputBus, InputTranslator, ControlTranslator     | No drag/drop semantics      |
+| `core/positioning/follow_point/` | SmoothFollowComponent                            | No drag/drop state          |
+| `dragdrop/`                      | D&D orchestration, state, validation, strategies | No generic input primitives |
 
 ---
 

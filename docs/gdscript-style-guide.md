@@ -1,6 +1,7 @@
 # GDScript Coding Guidelines
 
 - Static Typing: Always statically type every variable. Ex: `var x: Type` or `var x: Type = value`
+- Class References: Never reference class types by script path (e.g. `extends "res://..."` for class typing). Always use native `class_name` references.
 - Type Safety: use enums for constants and avoid magic strings
 - Node Access: use `@export var nodeName: NodeType` for scene dependencies, avoid get_node() or hardcoded paths
 - Decoupling: Prefer signals for upwards or complex communications and methods for downward communication

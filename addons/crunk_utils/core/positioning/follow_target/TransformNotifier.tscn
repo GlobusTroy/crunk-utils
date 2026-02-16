@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://htwprifdbsf"]
+
+[ext_resource type="Script" uid="uid://cuklc7smrlqdx" path="res://addons/crunk_utils/core/positioning/follow_target/TransformNotifier.gd" id="1_bkvd6"]
+
+[node name="TransformNotifier" type="Control" unique_id=586874812]
+editor_description = "Control that emits signal when transform changed notification triggers"
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -576.0
+offset_top = -324.0
+offset_right = -576.0
+offset_bottom = -324.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("1_bkvd6")
