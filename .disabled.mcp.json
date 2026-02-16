@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "godot-docs": {
+    "godot-documentation-reference": {
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@fernforestgames/mcp-server-godot-docs"],
