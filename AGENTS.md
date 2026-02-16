@@ -1,8 +1,5 @@
 # Project Documentation Reference
 
-Whenever working on this project, consult the documentation in the `docs/` directory for guidance with the following:
-- **docs/architecture-guidelines.md** - System boundaries and architectural conventions for crunk_utils
-
 ## Reference Triggers
 
 ### When editing ANY .gd file
