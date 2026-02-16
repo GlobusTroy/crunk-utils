@@ -29,6 +29,8 @@ enum TargetPositionType {
 	GLOBAL_TARGET_POSITION
 }
 
+const TRANSFORM_NOTIFIER_PREFAB : PackedScene = preload("res://addons/crunk_utils/core/positioning/follow_target/TransformNotifier.tscn")
+
 @export_category("Targets")
 ## Which node should follow the target (self or parent)
 @export var follower_type: FollowerType = FollowerType.PARENT
@@ -67,7 +69,7 @@ func _set_is_follow_enabled(val: bool) -> void:
 ## Cached reference to the parent control (only used when follower_type is PARENT)
 var _parent: Control 
 ## Injected component used for CENTERED_PROXY positioning
-var _injected_followed_component: Control = Control.new()
+var _injected_followed_component: TransformNotifier
 
 ## Updates the cached parent reference. Should be called when scene tree structure changes.
 func update_cached_parent() -> void:
@@ -81,10 +83,7 @@ func _ready() -> void:
 ## Creates and configures the injected component for centered positioning.
 ## This component is added to the followed control to provide center positioning.
 func _initialize_injected_followed_component() -> void:
-	_injected_followed_component.name = "FollowedComponent"
-	_injected_followed_component.size_flags_horizontal = SIZE_SHRINK_CENTER
-	_injected_followed_component.size_flags_vertical = SIZE_SHRINK_CENTER
-	_injected_followed_component.custom_minimum_size = Vector2.ZERO
+	_injected_followed_component = TRANSFORM_NOTIFIER_PREFAB.instantiate()
 	(followed_control if followed_control else self).add_child(_injected_followed_component)
 
 ## Gets the control that should be moved based on the follower_type setting.
