@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://c81ao0hdsfesm"]
 
 [ext_resource type="Script" uid="uid://cmmnlce4p0pmr" path="res://addons/crunk_utils/core/positioning/positioning_playground.gd" id="1_huh4o"]
-[ext_resource type="Script" uid="uid://cawx7a808w3w1" path="res://addons/crunk_utils/core/positioning/motion/ProcessMotionInterpolator.gd" id="2_02wqk"]
-[ext_resource type="Script" uid="uid://co5ls4kvk5afc" path="res://addons/crunk_utils/core/positioning/motion/LerpMotionInterpolator.gd" id="3_4hy42"]
-[ext_resource type="Script" uid="uid://23n07towh226" path="res://addons/crunk_utils/core/positioning/motion/SmoothDampMotionInterpolator.gd" id="4_8f6u5"]
+[ext_resource type="Script" uid="uid://cawx7a808w3w1" path="res://addons/crunk_utils/core/positioning/motion/process_motion_interpolator.gd" id="2_02wqk"]
+[ext_resource type="Script" uid="uid://co5ls4kvk5afc" path="res://addons/crunk_utils/core/positioning/motion/lerp_motion_interpolator.gd" id="3_4hy42"]
+[ext_resource type="Script" uid="uid://23n07towh226" path="res://addons/crunk_utils/core/positioning/motion/smooth_damp_motion_interpolator.gd" id="4_8f6u5"]
 [ext_resource type="Resource" uid="uid://cmc4ygha2k72v" path="res://addons/crunk_utils/core/positioning/motion/resources/lovely_blended_motion_1.tres" id="5_bc18n"]
-[ext_resource type="Script" uid="uid://bwytghc7yom2s" path="res://addons/crunk_utils/core/positioning/follow_target/FollowTargetControlComponent.gd" id="7_at174"]
+[ext_resource type="Script" uid="uid://bwytghc7yom2s" path="res://addons/crunk_utils/core/positioning/follow_target/follow_target_control_component.gd" id="7_at174"]
 
 [sub_resource type="Resource" id="Resource_0b7gl"]
 script = ExtResource("3_4hy42")

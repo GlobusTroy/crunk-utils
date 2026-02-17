@@ -1,10 +1,10 @@
 [gd_resource type="Resource" script_class="BlendedMotionInterpolator" format=3 uid="uid://cmc4ygha2k72v"]
 
-[ext_resource type="Script" uid="uid://cawx7a808w3w1" path="res://addons/crunk_utils/core/positioning/motion/ProcessMotionInterpolator.gd" id="1_73ayr"]
-[ext_resource type="Script" uid="uid://23n07towh226" path="res://addons/crunk_utils/core/positioning/motion/SmoothDampMotionInterpolator.gd" id="2_hwjjb"]
-[ext_resource type="Script" uid="uid://co5ls4kvk5afc" path="res://addons/crunk_utils/core/positioning/motion/LerpMotionInterpolator.gd" id="3_xlcak"]
-[ext_resource type="Script" uid="uid://bkqh8yc81bp10" path="res://addons/crunk_utils/core/positioning/motion/LinearMotionInterpolator.gd" id="4_lk0wv"]
-[ext_resource type="Script" uid="uid://dq88rg8nhapi5" path="res://addons/crunk_utils/core/positioning/motion/BlendedMotionInterpolator.gd" id="5_y0u3b"]
+[ext_resource type="Script" uid="uid://cawx7a808w3w1" path="res://addons/crunk_utils/core/positioning/motion/process_motion_interpolator.gd" id="1_73ayr"]
+[ext_resource type="Script" uid="uid://23n07towh226" path="res://addons/crunk_utils/core/positioning/motion/smooth_damp_motion_interpolator.gd" id="2_hwjjb"]
+[ext_resource type="Script" uid="uid://co5ls4kvk5afc" path="res://addons/crunk_utils/core/positioning/motion/lerp_motion_interpolator.gd" id="3_xlcak"]
+[ext_resource type="Script" uid="uid://bkqh8yc81bp10" path="res://addons/crunk_utils/core/positioning/motion/linear_motion_interpolator.gd" id="4_73ayr"]
+[ext_resource type="Script" uid="uid://dq88rg8nhapi5" path="res://addons/crunk_utils/core/positioning/motion/blended_motion_interpolator.gd" id="5_y0u3b"]
 
 [sub_resource type="Resource" id="Resource_jvuu8"]
 script = ExtResource("2_hwjjb")
@@ -18,7 +18,7 @@ lerp_speed = 4.0
 metadata/_custom_type_script = "uid://co5ls4kvk5afc"
 
 [sub_resource type="Resource" id="Resource_a6pp3"]
-script = ExtResource("4_lk0wv")
+script = ExtResource("4_73ayr")
 speed = 128.0
 metadata/_custom_type_script = "uid://bkqh8yc81bp10"
 
