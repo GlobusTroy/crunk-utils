@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c81ao0hdsfesm"]
 
-[ext_resource type="Script" uid="uid://cmmnlce4p0pmr" path="res://addons/crunk_utils/core/positioning/positioning_playground.gd" id="1_huh4o"]
+[ext_resource type="Script" path="res://addons/crunk_utils/core/positioning/positioning_playground.gd" id="1_huh4o"]
 [ext_resource type="Script" uid="uid://cawx7a808w3w1" path="res://addons/crunk_utils/core/positioning/motion/process_motion_interpolator.gd" id="2_02wqk"]
 [ext_resource type="Script" uid="uid://co5ls4kvk5afc" path="res://addons/crunk_utils/core/positioning/motion/lerp_motion_interpolator.gd" id="3_4hy42"]
 [ext_resource type="Script" uid="uid://23n07towh226" path="res://addons/crunk_utils/core/positioning/motion/smooth_damp_motion_interpolator.gd" id="4_8f6u5"]
