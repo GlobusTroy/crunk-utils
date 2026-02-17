@@ -35,7 +35,7 @@ enum TargetPositionType {
 	GLOBAL_TARGET_POSITION
 }
 
-const TRANSFORM_NOTIFIER_PREFAB : PackedScene = preload("res://addons/crunk_utils/core/positioning/follow_target/TransformNotifier.tscn")
+const TRANSFORM_NOTIFIER_PREFAB : PackedScene = preload("res://addons/crunk_utils/core/positioning/follow_target/transform_notifier.tscn")
 
 @export_category("Targets")
 ## Which node should follow the target (self or parent)
