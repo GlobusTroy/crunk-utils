@@ -1,33 +1,19 @@
 [gd_scene format=3 uid="uid://c81ao0hdsfesm"]
 
-[ext_resource type="Script" path="res://addons/crunk_utils/core/positioning/positioning_playground.gd" id="1_huh4o"]
+[ext_resource type="Script" uid="uid://cmmnlce4p0pmr" path="res://addons/crunk_utils/playgrounds/positioning_playground.gd" id="1_uxn18"]
 [ext_resource type="Script" uid="uid://cawx7a808w3w1" path="res://addons/crunk_utils/core/positioning/motion/process_motion_interpolator.gd" id="2_02wqk"]
-[ext_resource type="Script" uid="uid://co5ls4kvk5afc" path="res://addons/crunk_utils/core/positioning/motion/lerp_motion_interpolator.gd" id="3_4hy42"]
-[ext_resource type="Script" uid="uid://23n07towh226" path="res://addons/crunk_utils/core/positioning/motion/smooth_damp_motion_interpolator.gd" id="4_8f6u5"]
 [ext_resource type="Resource" uid="uid://cmc4ygha2k72v" path="res://addons/crunk_utils/core/positioning/motion/resources/lovely_blended_motion_1.tres" id="5_bc18n"]
 [ext_resource type="Script" uid="uid://bwytghc7yom2s" path="res://addons/crunk_utils/core/positioning/follow_target/follow_target_control_component.gd" id="7_at174"]
-
-[sub_resource type="Resource" id="Resource_0b7gl"]
-script = ExtResource("3_4hy42")
-lerp_speed = 5.0
-epsilon = 1.0
-metadata/_custom_type_script = "uid://co5ls4kvk5afc"
-
-[sub_resource type="Resource" id="Resource_vp85m"]
-script = ExtResource("4_8f6u5")
-smooth_time = 0.3
-epsilon = 1.0
-metadata/_custom_type_script = "uid://23n07towh226"
 
 [node name="CorePlayground" type="Control" unique_id=52761467 node_paths=PackedStringArray("target_a", "target_b", "follower", "follower2")]
 layout_mode = 3
 anchors_preset = 0
-script = ExtResource("1_huh4o")
+script = ExtResource("1_uxn18")
 target_a = NodePath("TargetA")
 target_b = NodePath("TargetB")
 follower = NodePath("Follower/FollowTargetControlComponent")
 follower2 = NodePath("FollowTargetControlComponent2")
-motion_types = Array[ExtResource("2_02wqk")]([SubResource("Resource_0b7gl"), SubResource("Resource_vp85m"), ExtResource("5_bc18n")])
+motion_types = Array[ExtResource("2_02wqk")]([ExtResource("5_bc18n")])
 
 [node name="TargetA" type="ColorRect" parent="." unique_id=833721862]
 layout_mode = 0

@@ -10,7 +10,10 @@ extends Node
 var _parent_control: Control
 
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	_initialize.call_deferred()
+	
+func _initialize() -> void:
 	_parent_control = get_parent() as Control
 	if not _parent_control:
 		push_error("ReceptorControlComponent: parent must be a Control")

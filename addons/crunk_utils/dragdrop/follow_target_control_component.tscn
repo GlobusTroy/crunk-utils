@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://cla6ekcsw0c6n"]
+
+[ext_resource type="Script" uid="uid://bwytghc7yom2s" path="res://addons/crunk_utils/core/positioning/follow_target/follow_target_control_component.gd" id="1_govdm"]
+[ext_resource type="Resource" uid="uid://cmc4ygha2k72v" path="res://addons/crunk_utils/core/positioning/motion/resources/lovely_blended_motion_1.tres" id="2_pqlh2"]
+
+[node name="FollowTargetControlComponent" type="Control" unique_id=1625024664]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_govdm")
+motion_interpolator = ExtResource("2_pqlh2")

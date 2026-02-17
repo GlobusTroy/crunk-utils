@@ -9,8 +9,10 @@ extends Node
 
 var _parent_control: Control
 
+func _enter_tree() -> void:
+	_initialize.call_deferred()
 
-func _ready() -> void:
+func _initialize() -> void:
 	_parent_control = get_parent() as Control
 	if not _parent_control:
 		push_error("DraggableControlComponent: parent must be a Control")
@@ -19,7 +21,6 @@ func _ready() -> void:
 	if bus:
 		bus.register_draggable(_parent_control, self)
 		InputBusUtils.connect_control(_parent_control, bus.get_input_bus())
-
 
 func _exit_tree() -> void:
 	if not _parent_control:

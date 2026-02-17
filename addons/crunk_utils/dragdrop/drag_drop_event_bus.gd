@@ -15,6 +15,12 @@ signal drag_started(draggable_component: DraggableControlComponent, control: Con
 ## Emitted when an active drag is cancelled (right-click or released off a receptor).
 signal drag_cancelled(draggable_component: DraggableControlComponent, control: Control)
 
+## Emitted when the mouse is held on a draggable before the drag threshold is crossed.
+signal pending_drag_started(draggable_component: DraggableControlComponent, control: Control)
+
+## Emitted when a pending drag ends — either released without crossing the threshold, or promoted to an active drag.
+signal pending_drag_stopped(draggable_component: DraggableControlComponent, control: Control)
+
 ## Emitted when a dragged control is released over a receptor.
 signal drop_requested(
 	draggable_component: DraggableControlComponent, draggable_control: Control,
@@ -29,6 +35,9 @@ signal receptor_hovered_changed(
 signal draggable_hovered_changed(
 	old_component: DraggableControlComponent, old_control: Control,
 	new_component: DraggableControlComponent, new_control: Control)
+
+## Emitted when a DraggableControlComponent registers its control with the bus.
+signal draggable_registered(draggable_component: DraggableControlComponent, control: Control)
 
 ## Pixel distance the mouse must travel while held before a drag is initiated.
 @export var drag_threshold: float = 5.0
@@ -71,6 +80,7 @@ func _ready() -> void:
 
 func register_draggable(control: Control, component: DraggableControlComponent) -> void:
 	_draggable_registry[control] = component
+	draggable_registered.emit(component, control)
 
 
 func unregister_draggable(control: Control) -> void:
@@ -83,6 +93,10 @@ func register_receptor(control: Control, component: ReceptorControlComponent) ->
 
 func unregister_receptor(control: Control) -> void:
 	_receptor_registry.erase(control)
+
+
+func get_registered_draggables() -> Dictionary[Control, DraggableControlComponent]:
+	return _draggable_registry
 
 
 # --- Input handlers ---
@@ -138,6 +152,7 @@ func _handle_mouse_button(event: InputEventMouseButton, source: Control) -> void
 				_pending_drag_component = _draggable_registry[source]
 				_pending_drag_control = source as Control
 				_mouse_down_position = event.position
+				pending_drag_started.emit(_pending_drag_component, _pending_drag_control)
 		else:
 			if _is_dragging:
 				if _hovered_receptor_component != null:
@@ -148,6 +163,8 @@ func _handle_mouse_button(event: InputEventMouseButton, source: Control) -> void
 					drag_cancelled.emit(_dragged_component, _dragged_control)
 				_reset_drag_state()
 			else:
+				if _pending_drag_component != null:
+					pending_drag_stopped.emit(_pending_drag_component, _pending_drag_control)
 				_clear_pending_drag()
 
 	elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
@@ -163,6 +180,7 @@ func _handle_mouse_motion(event: InputEventMouseMotion) -> void:
 		_is_dragging = true
 		_dragged_component = _pending_drag_component
 		_dragged_control = _pending_drag_control
+		pending_drag_stopped.emit(_pending_drag_component, _pending_drag_control)
 		_clear_pending_drag()
 		drag_started.emit(_dragged_component, _dragged_control)
 
