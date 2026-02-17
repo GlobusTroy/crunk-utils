@@ -93,15 +93,19 @@ func _ready() -> void:
 func _initialize_injected_followed_component() -> void:
 	if not _injected_followed_component:
 		_injected_followed_component = TRANSFORM_NOTIFIER_PREFAB.instantiate() as TransformNotifier
+		if not _injected_followed_component:
+			push_error("Failed to instantiate TransformNotifier prefab")
+			return
 
 	if not _injected_followed_component.transform_changed.is_connected(_on_injected_transform_changed):
 		_injected_followed_component.transform_changed.connect(_on_injected_transform_changed)
-
-	var host: Control = followed_control if followed_control else self
-	if _injected_followed_component.get_parent() == null:
-		host.add_child(_injected_followed_component)
-	elif _injected_followed_component.get_parent() != host:
-		_injected_followed_component.reparent(host)
+		
+	var prev_parent: Control = _injected_followed_component.get_parent_control()
+	if prev_parent != followed_control:
+		if prev_parent != null: prev_parent.remove_child(_injected_followed_component)
+		if followed_control != null: 
+			followed_control.add_child(_injected_followed_component)
+			_injected_followed_component.set_anchors_and_offsets_preset(PRESET_CENTER, PRESET_MODE_MINSIZE)
 
 ## Gets the control that should be moved based on the follower_type setting.
 ## [return]: The control to move, or null if configuration is invalid
@@ -140,7 +144,7 @@ func _is_at_destination() -> bool:
 	var follower: Control = _get_follower()
 	if not follower or not motion_interpolator:
 		return true
-	return motion_interpolator.is_at_destination(_get_follower_position(), _get_target_position())
+	return motion_interpolator.is_at_destination(_get_follower_space_position(), _get_target_position())
 
 ## Calculates the target position based on target_position_type setting.
 ## [return]: The target position in global coordinates
@@ -160,7 +164,8 @@ func _get_target_position() -> Vector2:
 		_: 
 			return followed_control.global_position
 
-func _get_follower_position_offset() -> Vector2:
+## Gets the offset from follower origin to its logical position
+func _get_follower_offset() -> Vector2:
 	var follower: Control = _get_follower()
 	if not follower:
 		return Vector2.ZERO
@@ -170,8 +175,18 @@ func _get_follower_position_offset() -> Vector2:
 		FollowerPositionType.GLOBAL_POSITION: return Vector2.ZERO
 		_: return Vector2.ZERO 
 
-func _get_follower_position() -> Vector2:
-	return _get_follower().global_position + _get_follower_position_offset()
+## Converts follower's global position to follower-space position
+func _get_follower_space_position() -> Vector2:
+	var follower: Control = _get_follower()
+	if not follower:
+		return Vector2.ZERO
+	return follower.global_position + _get_follower_offset()
+
+## Applies follower-space position to follower in global coordinates (accounting for offset)
+func _apply_follower_position(global_pos: Vector2) -> void:
+	var follower: Control = _get_follower()
+	if not follower: return
+	follower.global_position = global_pos - _get_follower_offset()
 
 func _process(delta: float) -> void:
 	if not is_follow_enabled or not followed_control: return
@@ -180,10 +195,10 @@ func _process(delta: float) -> void:
 	if not apply_to: return
 	if not motion_interpolator: return
 	
-	var current_pos : Vector2 = _get_follower_position()
+	var current_pos : Vector2 = _get_follower_space_position()
 	var target_pos : Vector2 = _get_target_position()
 	var next_pos : Vector2 = motion_interpolator.get_next_frame_position(current_pos, target_pos, delta)
-	apply_to.global_position = next_pos - _get_follower_position_offset()
+	_apply_follower_position(next_pos)
 	
 	if motion_interpolator.is_at_destination(next_pos, target_pos):
 		_snap_to_target()
@@ -195,7 +210,7 @@ func _snap_to_target() -> void:
 	if not apply_to: return
 	
 	var target_pos : Vector2 = _get_target_position()
-	apply_to.global_position = target_pos
+	_apply_follower_position(target_pos)
 	set_process(false)
 	_set_notify_transform(true)
 	
