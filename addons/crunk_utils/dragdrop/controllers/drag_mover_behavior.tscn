@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dnfo0vigmytnc"]
 
-[ext_resource type="Script" uid="uid://c8qrhmukhbd42" path="res://addons/crunk_utils/dragdrop/drag_mover_behavior.gd" id="1_sos0f"]
-[ext_resource type="PackedScene" uid="uid://cla6ekcsw0c6n" path="res://addons/crunk_utils/dragdrop/follow_target_control_component.tscn" id="2_5r0on"]
+[ext_resource type="Script" uid="uid://c8qrhmukhbd42" path="res://addons/crunk_utils/dragdrop/controllers/drag_mover_behavior.gd" id="1_sos0f"]
+[ext_resource type="PackedScene" uid="uid://cla6ekcsw0c6n" path="res://addons/crunk_utils/core/positioning/follow_target/follow_target_control_component.tscn" id="2_5r0on"]
 
 [node name="DragMoverBehavior" type="Node" unique_id=1063245657]
 script = ExtResource("1_sos0f")

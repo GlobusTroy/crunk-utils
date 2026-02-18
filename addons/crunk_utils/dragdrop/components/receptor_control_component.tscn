@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://saa7el83xvb0"]
 
-[ext_resource type="Script" uid="uid://cr5sivc71mn0g" path="res://addons/crunk_utils/dragdrop/receptor_control_component.gd" id="1_aulux"]
+[ext_resource type="Script" uid="uid://cr5sivc71mn0g" path="res://addons/crunk_utils/dragdrop/components/receptor_control_component.gd" id="1_aulux"]
 
 [node name="ReceptorControlComponent" type="Control" unique_id=558661480]
 layout_mode = 3

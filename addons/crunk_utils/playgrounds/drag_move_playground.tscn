@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://cbilgkb2bo5dk"]
 
 [ext_resource type="Script" uid="uid://cge1q5gahkspo" path="res://addons/crunk_utils/playgrounds/drag_move_playground.gd" id="1_main"]
-[ext_resource type="Script" uid="uid://d2akiyf2nruk2" path="res://addons/crunk_utils/dragdrop/drag_drop_event_bus.gd" id="2_0crd5"]
-[ext_resource type="PackedScene" uid="uid://dnfo0vigmytnc" path="res://addons/crunk_utils/dragdrop/drag_mover_behavior.tscn" id="3_event_bus"]
-[ext_resource type="PackedScene" uid="uid://saa7el83xvb0" path="res://addons/crunk_utils/dragdrop/receptor_control_component.tscn" id="4_usgru"]
-[ext_resource type="PackedScene" uid="uid://5kmdyhee6pix" path="res://addons/crunk_utils/dragdrop/draggable_control_component.tscn" id="5_v7pfg"]
+[ext_resource type="Script" uid="uid://d2akiyf2nruk2" path="res://addons/crunk_utils/dragdrop/input/drag_drop_event_bus.gd" id="2_0crd5"]
+[ext_resource type="PackedScene" uid="uid://dnfo0vigmytnc" path="res://addons/crunk_utils/dragdrop/controllers/drag_mover_behavior.tscn" id="3_event_bus"]
+[ext_resource type="PackedScene" uid="uid://saa7el83xvb0" path="res://addons/crunk_utils/dragdrop/components/receptor_control_component.tscn" id="4_usgru"]
+[ext_resource type="PackedScene" uid="uid://5kmdyhee6pix" path="res://addons/crunk_utils/dragdrop/components/draggable_control_component.tscn" id="5_v7pfg"]
 
 [node name="DragMovePlayground" type="Control" unique_id=1456351808]
 layout_mode = 3

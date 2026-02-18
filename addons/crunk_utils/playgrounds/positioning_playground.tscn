@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://c81ao0hdsfesm"]
 
 [ext_resource type="Script" uid="uid://cmmnlce4p0pmr" path="res://addons/crunk_utils/playgrounds/positioning_playground.gd" id="1_uxn18"]
-[ext_resource type="Script" uid="uid://cawx7a808w3w1" path="res://addons/crunk_utils/core/positioning/motion/process_motion_interpolator.gd" id="2_02wqk"]
-[ext_resource type="Resource" uid="uid://cmc4ygha2k72v" path="res://addons/crunk_utils/core/positioning/motion/resources/lovely_blended_motion_1.tres" id="5_bc18n"]
+[ext_resource type="Script" uid="uid://cawx7a808w3w1" path="res://addons/crunk_utils/core/positioning/motion/position_interpolators/strategies/process_motion_interpolator.gd" id="2_02wqk"]
+[ext_resource type="Resource" uid="uid://cmc4ygha2k72v" path="res://addons/crunk_utils/core/positioning/motion/position_interpolators/resources/lovely_blended_motion_1.tres" id="5_bc18n"]
 [ext_resource type="Script" uid="uid://bwytghc7yom2s" path="res://addons/crunk_utils/core/positioning/follow_target/follow_target_control_component.gd" id="7_at174"]
 
 [node name="CorePlayground" type="Control" unique_id=52761467 node_paths=PackedStringArray("target_a", "target_b", "follower", "follower2")]

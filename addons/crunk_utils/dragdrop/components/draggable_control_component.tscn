@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://5kmdyhee6pix"]
 
-[ext_resource type="Script" uid="uid://bp3j21up6l7bo" path="res://addons/crunk_utils/dragdrop/draggable_control_component.gd" id="1_aui5a"]
+[ext_resource type="Script" uid="uid://bp3j21up6l7bo" path="res://addons/crunk_utils/dragdrop/components/draggable_control_component.gd" id="1_aui5a"]
 
 [node name="DraggableControlComponent" type="Control" unique_id=558661480]
 layout_mode = 3
