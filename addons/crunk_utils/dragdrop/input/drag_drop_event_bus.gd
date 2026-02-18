@@ -68,12 +68,15 @@ var _hovered_receptor_control: Control = null
 func get_input_bus() -> InputBusForNodes:
 	return _input_bus
 
+func get_is_dragging() -> bool:
+	return _is_dragging
 
 func _ready() -> void:
 	add_to_group(GROUP_NAME)
 	_input_bus.input_event.connect(_on_input_event)
 	_input_bus.mouse_entered.connect(_on_mouse_entered)
 	_input_bus.mouse_exited.connect(_on_mouse_exited)
+	_reset_drag_state()
 
 
 # --- Registration API ---

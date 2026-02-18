@@ -9,7 +9,6 @@ extends Node
 
 var _parent_control: Control
 
-
 func _enter_tree() -> void:
 	_initialize.call_deferred()
 	
@@ -22,7 +21,6 @@ func _initialize() -> void:
 	if bus:
 		bus.register_receptor(_parent_control, self)
 		InputBusUtils.connect_control(_parent_control, bus.get_input_bus())
-
 
 func _exit_tree() -> void:
 	if not _parent_control:

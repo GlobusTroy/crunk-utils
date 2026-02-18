@@ -9,6 +9,7 @@
 [node name="DragMovePlayground" type="Control" unique_id=1456351808]
 layout_mode = 3
 anchors_preset = 0
+mouse_filter = 2
 script = ExtResource("1_main")
 
 [node name="DragDropEventBus" type="Node" parent="." unique_id=1408630599]
@@ -22,7 +23,6 @@ offset_left = 50.0
 offset_top = 200.0
 offset_right = 150.0
 offset_bottom = 230.0
-mouse_filter = 2
 text = "Reset Positions"
 
 [node name="StatusLabel" type="Label" parent="." unique_id=1436915498]
@@ -43,7 +43,22 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="DraggableRed" type="ColorRect" parent="Control" unique_id=547532260]
+z_index = 2
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 338.0
+offset_top = 56.0
+offset_right = 398.0
+offset_bottom = 156.0
+color = Color(0.8, 0.2, 0.2, 1)
+
+[node name="DraggableControlComponent" parent="Control/DraggableRed" unique_id=2001840134 instance=ExtResource("5_v7pfg")]
+layout_mode = 1
+mouse_filter = 2
+
 [node name="Receptor1" type="ColorRect" parent="Control" unique_id=1141368891]
+z_index = -1
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 0
 offset_left = 867.0
@@ -57,6 +72,7 @@ layout_mode = 1
 mouse_filter = 2
 
 [node name="Receptor2" type="ColorRect" parent="Control" unique_id=193857297]
+z_index = -1
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 0
 offset_left = 136.0
@@ -74,6 +90,7 @@ offset_bottom = -109.0
 mouse_filter = 2
 
 [node name="Receptor3" type="ColorRect" parent="Control" unique_id=1393619180]
+z_index = -1
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 0
 offset_left = 500.0
@@ -90,20 +107,8 @@ offset_right = 367.0
 offset_bottom = -19.0
 mouse_filter = 2
 
-[node name="DraggableRed" type="ColorRect" parent="Control" unique_id=547532260]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 0
-offset_left = 338.0
-offset_top = 56.0
-offset_right = 398.0
-offset_bottom = 156.0
-color = Color(0.8, 0.2, 0.2, 1)
-
-[node name="DraggableControlComponent" parent="Control/DraggableRed" unique_id=2001840134 instance=ExtResource("5_v7pfg")]
-layout_mode = 1
-mouse_filter = 2
-
 [node name="DraggableGreen" type="ColorRect" parent="Control" unique_id=2094599924]
+z_index = 2
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 0
 offset_left = 418.0
@@ -114,11 +119,10 @@ color = Color(0.2, 0.8, 0.2, 1)
 
 [node name="DraggableControlComponent2" parent="Control/DraggableGreen" unique_id=763675058 instance=ExtResource("5_v7pfg")]
 layout_mode = 1
-offset_left = -80.0
-offset_right = -80.0
 mouse_filter = 2
 
 [node name="DraggableBlue" type="ColorRect" parent="Control" unique_id=166775458]
+z_index = 2
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 0
 offset_left = 498.0
@@ -129,11 +133,10 @@ color = Color(0.2, 0.2, 0.8, 1)
 
 [node name="DraggableControlComponent3" parent="Control/DraggableBlue" unique_id=830003963 instance=ExtResource("5_v7pfg")]
 layout_mode = 1
-offset_left = -160.0
-offset_right = -160.0
 mouse_filter = 2
 
 [node name="DraggableYellow" type="ColorRect" parent="Control" unique_id=342894333]
+z_index = 2
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 0
 offset_left = 578.0
@@ -144,6 +147,4 @@ color = Color(0.8, 0.8, 0.2, 1)
 
 [node name="DraggableControlComponent4" parent="Control/DraggableYellow" unique_id=665291592 instance=ExtResource("5_v7pfg")]
 layout_mode = 1
-offset_left = -240.0
-offset_right = -240.0
 mouse_filter = 2

@@ -38,7 +38,6 @@ func _on_draggable_registered(component: DraggableControlComponent, control: Con
 	if follow_target_component_scene:
 		var follow_component: FollowTargetControlComponent = follow_target_component_scene.instantiate() as FollowTargetControlComponent
 		if follow_component:
-			follow_component.is_follow_enabled = false
 			control.add_child(follow_component)
 			_draggable_followers[component] = follow_component
 			return
